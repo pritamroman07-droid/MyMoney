@@ -10,7 +10,7 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="pt-16 lg:pl-64">
+      <div className="pt-14 sm:pt-16 lg:pl-64">
         <Dashboard />
       </div>
     </div>

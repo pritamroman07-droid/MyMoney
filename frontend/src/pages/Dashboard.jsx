@@ -48,21 +48,21 @@ const cards = [
 
 export default function Dashboard() {
   return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Good Morning 👋
         </h1>
-        <p className="text-gray-500 mt-1">Here's your financial overview</p>
+        <p className="text-sm sm:text-base text-gray-500 mt-1">Here's your financial overview</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {cards.map((card) => (
           <SummaryCard key={card.title} {...card} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
         <div className="lg:col-span-1">
           <QuickExpense />
         </div>

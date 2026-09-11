@@ -35,23 +35,23 @@ const transactions = [
 
 export default function RecentTransactions() {
   return (
-    <div className="bg-white rounded-xl p-5 border border-gray-100">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h2>
+    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h2>
 
       <div className="space-y-3">
         {transactions.map((tx) => (
-          <div key={tx.id} className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${tx.color}`}>
-                <span className="text-lg">{tx.emoji}</span>
+          <div key={tx.id} className="flex items-center justify-between py-2 gap-2 min-w-0">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${tx.color}`}>
+                <span className="text-base sm:text-lg">{tx.emoji}</span>
               </div>
-              <div>
-                <p className="font-medium text-gray-900">{tx.category}</p>
-                <p className="text-sm text-gray-500">{tx.date}</p>
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900 truncate text-sm sm:text-base">{tx.category}</p>
+                <p className="text-xs sm:text-sm text-gray-500">{tx.date}</p>
               </div>
             </div>
             <span
-              className={`font-semibold ${
+              className={`font-semibold shrink-0 text-sm sm:text-base ${
                 tx.amount > 0 ? 'text-emerald-600' : 'text-gray-900'
               }`}
             >
