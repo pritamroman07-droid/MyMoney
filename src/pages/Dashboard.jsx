@@ -1,6 +1,7 @@
 import SummaryCard from '../components/SummaryCard'
 import QuickExpense from '../components/QuickExpense'
 import SpendingChart from '../components/SpendingChart'
+import RecentTransactions from '../components/RecentTransactions'
 
 const cards = [
   {
@@ -61,7 +62,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-1">
           <QuickExpense />
         </div>
@@ -69,6 +70,8 @@ export default function Dashboard() {
           <SpendingChart />
         </div>
       </div>
+
+      <RecentTransactions />
     </div>
   )
 }
