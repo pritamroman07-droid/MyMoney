@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 export default function Navbar({ onMenuToggle }) {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">

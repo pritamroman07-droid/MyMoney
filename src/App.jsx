@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
-import './App.css'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)

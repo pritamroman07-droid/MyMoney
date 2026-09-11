@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 const menuItems = [
   {
     name: 'Dashboard',
