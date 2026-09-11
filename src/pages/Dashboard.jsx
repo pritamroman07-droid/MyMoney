@@ -1,5 +1,6 @@
 import SummaryCard from '../components/SummaryCard'
 import QuickExpense from '../components/QuickExpense'
+import SpendingChart from '../components/SpendingChart'
 
 const cards = [
   {
@@ -63,6 +64,9 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <QuickExpense />
+        </div>
+        <div className="lg:col-span-2">
+          <SpendingChart />
         </div>
       </div>
     </div>
