@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_URL = 'http://localhost:5000/api/transactions'
+
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other']
 
 const categoryEmojis = {
@@ -40,16 +42,16 @@ export default function RecentTransactions({ expenses, setExpenses }) {
   const [editCategory, setEditCategory] = useState('')
   const [editError, setEditError] = useState('')
 
-  const sorted = [...expenses].sort((a, b) => b.id - a.id)
+  const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date))
 
   const handleEdit = (tx) => {
-    setEditingId(tx.id)
+    setEditingId(tx._id)
     setEditAmount(tx.amount.toString())
     setEditCategory(tx.category)
     setEditError('')
   }
 
-  const handleSaveEdit = (id) => {
+  const handleSaveEdit = async (id) => {
     setEditError('')
     const parsed = parseFloat(editAmount)
 
@@ -63,14 +65,47 @@ export default function RecentTransactions({ expenses, setExpenses }) {
       return
     }
 
-    setExpenses(expenses.map((e) =>
-      e.id === id ? { ...e, amount: parsed, category: editCategory } : e
-    ))
-    setEditingId(null)
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: parsed,
+          category: editCategory,
+          date: expenses.find((e) => e._id === id).date,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setEditError(data.message || 'Unable to update expense')
+        return
+      }
+
+      setExpenses(expenses.map((e) =>
+        e._id === id ? data.transaction : e
+      ))
+      setEditingId(null)
+    } catch (err) {
+      setEditError('Unable to update expense')
+    }
   }
 
-  const handleDelete = (id) => {
-    setExpenses(expenses.filter((e) => e.id !== id))
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!res.ok) {
+        return
+      }
+
+      setExpenses(expenses.filter((e) => e._id !== id))
+    } catch (err) {
+      // silently fail
+    }
   }
 
   return (
@@ -85,13 +120,13 @@ export default function RecentTransactions({ expenses, setExpenses }) {
       ) : (
         <div className="space-y-3">
           {sorted.map((tx) => (
-          <div key={tx.id} className="flex items-center justify-between py-2 gap-2 min-w-0">
+          <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${categoryColors[tx.category] || 'bg-gray-100'}`}>
                 <span className="text-base sm:text-lg">{categoryEmojis[tx.category] || '📦'}</span>
               </div>
               <div className="min-w-0 flex-1">
-                {editingId === tx.id ? (
+                {editingId === tx._id ? (
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
@@ -124,10 +159,10 @@ export default function RecentTransactions({ expenses, setExpenses }) {
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              {editingId === tx.id ? (
+              {editingId === tx._id ? (
                 <>
                   <button
-                    onClick={() => handleSaveEdit(tx.id)}
+                    onClick={() => handleSaveEdit(tx._id)}
                     className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
                   >
                     Save
@@ -151,7 +186,7 @@ export default function RecentTransactions({ expenses, setExpenses }) {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(tx.id)}
+                    onClick={() => handleDelete(tx._id)}
                     className="text-xs text-red-600 hover:text-red-700 font-medium"
                   >
                     Delete
