@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const API_URL = 'http://localhost:5001/api/transactions'
+const API_URL = '/api/transactions'
 
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other']
 
@@ -14,7 +14,7 @@ const categoryEmojis = {
   Other: '📦',
 }
 
-export default function QuickExpense({ expenses, setExpenses }) {
+export default function QuickExpense({ expenses, setExpenses, token }) {
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('Food')
   const [error, setError] = useState('')
@@ -39,7 +39,10 @@ export default function QuickExpense({ expenses, setExpenses }) {
     try {
       const res = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           amount: parsed,
           category,

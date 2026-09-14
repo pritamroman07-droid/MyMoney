@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-const API_URL = 'http://localhost:5001/api/transactions'
+const EXPENSE_API = '/api/transactions'
+const INCOME_API = '/api/income'
 
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other']
 
@@ -36,22 +37,30 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
 }
 
-export default function RecentTransactions({ expenses, setExpenses }) {
+export default function RecentTransactions({ expenses, setExpenses, income, setIncome, token }) {
   const [editingId, setEditingId] = useState(null)
+  const [editingType, setEditingType] = useState('')
   const [editAmount, setEditAmount] = useState('')
   const [editCategory, setEditCategory] = useState('')
+  const [editDate, setEditDate] = useState('')
   const [editError, setEditError] = useState('')
 
-  const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date))
+  const expenseList = expenses.map((e) => ({ ...e, type: 'expense' }))
+  const incomeList = income.map((i) => ({ ...i, type: 'income' }))
+  const allTransactions = [...expenseList, ...incomeList].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  )
 
   const handleEdit = (tx) => {
     setEditingId(tx._id)
+    setEditingType(tx.type)
     setEditAmount(tx.amount.toString())
-    setEditCategory(tx.category)
+    setEditCategory(tx.category || '')
+    setEditDate(tx.date)
     setEditError('')
   }
 
-  const handleSaveEdit = async (id) => {
+  const handleSaveEdit = async (id, type) => {
     setEditError('')
     const parsed = parseFloat(editAmount)
 
@@ -65,137 +74,203 @@ export default function RecentTransactions({ expenses, setExpenses }) {
       return
     }
 
+    if (!editDate) {
+      setEditError('Please select a date')
+      return
+    }
+
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: parsed,
-          category: editCategory,
-          date: expenses.find((e) => e._id === id).date,
-        }),
-      })
+      if (type === 'expense') {
+        if (!editCategory) {
+          setEditError('Please select a category')
+          return
+        }
 
-      const data = await res.json()
+        const res = await fetch(`${EXPENSE_API}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amount: parsed,
+            category: editCategory,
+            date: editDate,
+          }),
+        })
 
-      if (!res.ok) {
-        setEditError(data.message || 'Unable to update expense')
-        return
+        const data = await res.json()
+
+        if (!res.ok) {
+          setEditError(data.message || 'Unable to update expense')
+          return
+        }
+
+        setExpenses(expenses.map((e) =>
+          e._id === id ? data.transaction : e
+        ))
+      } else {
+        const res = await fetch(`${INCOME_API}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amount: parsed,
+            date: editDate,
+          }),
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          setEditError(data.message || 'Unable to update income')
+          return
+        }
+
+        setIncome(income.map((i) =>
+          i._id === id ? data.income : i
+        ))
       }
 
-      setExpenses(expenses.map((e) =>
-        e._id === id ? data.transaction : e
-      ))
       setEditingId(null)
     } catch {
-      setEditError('Unable to update expense')
+      setEditError('Unable to update')
     }
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, type) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
+      const api = type === 'expense' ? EXPENSE_API : INCOME_API
+      const res = await fetch(`${api}/${id}`, {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
       })
 
       if (!res.ok) {
         return
       }
 
-      setExpenses(expenses.filter((e) => e._id !== id))
+      if (type === 'expense') {
+        setExpenses(expenses.filter((e) => e._id !== id))
+      } else {
+        setIncome(income.filter((i) => i._id !== id))
+      }
     } catch {
       // silently fail
     }
   }
 
+  const isEmpty = allTransactions.length === 0
+
   return (
     <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
       <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h2>
 
-      {sorted.length === 0 ? (
+      {isEmpty ? (
         <div className="text-center py-8">
-          <p className="text-gray-500 text-sm">No expenses yet</p>
-          <p className="text-gray-400 text-xs mt-1">Add your first expense to get started.</p>
+          <p className="text-gray-500 text-sm">No transactions yet</p>
+          <p className="text-gray-400 text-xs mt-1">Add your first income or expense to get started.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {sorted.map((tx) => (
-          <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${categoryColors[tx.category] || 'bg-gray-100'}`}>
-                <span className="text-base sm:text-lg">{categoryEmojis[tx.category] || '📦'}</span>
-              </div>
-              <div className="min-w-0 flex-1">
-                {editingId === tx._id ? (
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        value={editAmount}
-                        onChange={(e) => {
-                          setEditAmount(e.target.value)
-                          setEditError('')
-                        }}
-                        className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                      />
-                      <select
-                        value={editCategory}
-                        onChange={(e) => setEditCategory(e.target.value)}
-                        className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                      >
-                        {categories.map((cat) => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                      </select>
+          {allTransactions.map((tx) => (
+            <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                  tx.type === 'income' ? 'bg-blue-100' : (categoryColors[tx.category] || 'bg-gray-100')
+                }`}>
+                  <span className="text-base sm:text-lg">
+                    {tx.type === 'income' ? '💰' : (categoryEmojis[tx.category] || '📦')}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  {editingId === tx._id ? (
+                    <div className="space-y-2">
+                      <div className="flex gap-2 flex-wrap">
+                        <input
+                          type="number"
+                          value={editAmount}
+                          onChange={(e) => {
+                            setEditAmount(e.target.value)
+                            setEditError('')
+                          }}
+                          className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                        {editingType === 'expense' && (
+                          <select
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value)}
+                            className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          >
+                            {categories.map((cat) => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                        )}
+                        <input
+                          type="date"
+                          value={editDate}
+                          onChange={(e) => {
+                            setEditDate(e.target.value)
+                            setEditError('')
+                          }}
+                          className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                      {editError && <p className="text-red-500 text-xs">{editError}</p>}
                     </div>
-                    {editError && <p className="text-red-500 text-xs">{editError}</p>}
-                  </div>
+                  ) : (
+                    <>
+                      <p className="font-medium text-gray-900 truncate text-sm sm:text-base">
+                        {tx.type === 'income' ? 'Income' : tx.category}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-500">{formatDate(tx.date)}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {editingId === tx._id ? (
+                  <>
+                    <button
+                      onClick={() => handleSaveEdit(tx._id, tx.type)}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                    >
+                      Cancel
+                    </button>
+                  </>
                 ) : (
                   <>
-                    <p className="font-medium text-gray-900 truncate text-sm sm:text-base">{tx.category}</p>
-                    <p className="text-xs sm:text-sm text-gray-500">{formatDate(tx.date)}</p>
+                    <span className={`font-semibold text-sm sm:text-base ${
+                      tx.type === 'income' ? 'text-blue-600' : 'text-gray-900'
+                    }`}>
+                      {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                    </span>
+                    <button
+                      onClick={() => handleEdit(tx)}
+                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(tx._id, tx.type)}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {editingId === tx._id ? (
-                <>
-                  <button
-                    onClick={() => handleSaveEdit(tx._id)}
-                    className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="text-xs text-gray-500 hover:text-gray-700 font-medium"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span className="font-semibold text-sm sm:text-base text-gray-900">
-                    -₹{tx.amount.toLocaleString()}
-                  </span>
-                  <button
-                    onClick={() => handleEdit(tx)}
-                    className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(tx._id)}
-                    className="text-xs text-red-600 hover:text-red-700 font-medium"
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+          ))}
         </div>
       )}
     </div>
