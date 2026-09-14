@@ -1,4 +1,4 @@
-export default function Navbar({ onMenuToggle }) {
+export default function Navbar({ onMenuToggle, user, onLogout }) {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
       <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 h-14 sm:h-16">
@@ -27,8 +27,14 @@ export default function Navbar({ onMenuToggle }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <span className="text-sm font-medium text-gray-700">John</span>
+            <span className="text-sm font-medium text-gray-700">{user?.name || 'User'}</span>
           </div>
+          <button
+            onClick={onLogout}
+            className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </nav>
