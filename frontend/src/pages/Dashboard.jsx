@@ -103,7 +103,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <RecentTransactions expenses={expenses} />
+      <RecentTransactions expenses={expenses} setExpenses={setExpenses} />
     </div>
   )
 }
