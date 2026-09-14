@@ -77,8 +77,14 @@ export default function RecentTransactions({ expenses, setExpenses }) {
     <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
       <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h2>
 
-      <div className="space-y-3">
-        {sorted.map((tx) => (
+      {sorted.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-sm">No expenses yet</p>
+          <p className="text-gray-400 text-xs mt-1">Add your first expense to get started.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {sorted.map((tx) => (
           <div key={tx.id} className="flex items-center justify-between py-2 gap-2 min-w-0">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${categoryColors[tx.category] || 'bg-gray-100'}`}>
@@ -155,7 +161,8 @@ export default function RecentTransactions({ expenses, setExpenses }) {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
