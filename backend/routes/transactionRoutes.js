@@ -1,12 +1,16 @@
 import express from 'express'
 import Transaction from '../models/Transaction.js'
+import auth from '../middleware/auth.js'
 
 const router = express.Router()
+
+// All routes require authentication
+router.use(auth)
 
 // GET /api/transactions
 router.get('/', async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({ createdAt: -1 })
+    const transactions = await Transaction.find({ user: req.userId }).sort({ createdAt: -1 })
     res.json(transactions)
   } catch (error) {
     res.status(500).json({ message: 'Unable to load transactions' })
@@ -26,7 +30,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Amount must be a positive number' })
     }
 
-    const transaction = await Transaction.create({ amount, category, date })
+    const transaction = await Transaction.create({
+      user: req.userId,
+      amount,
+      category,
+      date,
+    })
     res.status(201).json({ message: 'Expense added successfully', transaction })
   } catch (error) {
     res.status(500).json({ message: 'Unable to add expense' })
@@ -46,8 +55,8 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ message: 'Amount must be a positive number' })
     }
 
-    const transaction = await Transaction.findByIdAndUpdate(
-      req.params.id,
+    const transaction = await Transaction.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
       { amount, category, date },
       { new: true }
     )
@@ -65,7 +74,10 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/transactions/:id
 router.delete('/:id', async (req, res) => {
   try {
-    const transaction = await Transaction.findByIdAndDelete(req.params.id)
+    const transaction = await Transaction.findOneAndDelete({
+      _id: req.params.id,
+      user: req.userId,
+    })
 
     if (!transaction) {
       return res.status(404).json({ message: 'Transaction not found' })
