@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const API_URL = 'http://localhost:5000/api/transactions'
+const API_URL = 'http://localhost:5001/api/transactions'
 
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other']
 

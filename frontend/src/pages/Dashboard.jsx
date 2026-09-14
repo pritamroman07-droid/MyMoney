@@ -5,7 +5,7 @@ import SpendingChart from '../components/SpendingChart'
 import RecentTransactions from '../components/RecentTransactions'
 
 const INCOME = 30000
-const API_URL = 'http://localhost:5000/api/transactions'
+const API_URL = 'http://localhost:5001/api/transactions'
 
 export default function Dashboard() {
   const [expenses, setExpenses] = useState([])
