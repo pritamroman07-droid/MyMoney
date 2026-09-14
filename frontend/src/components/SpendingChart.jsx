@@ -1,13 +1,25 @@
-const weeklyData = [
-  { week: 'Week 1', amount: 1200 },
-  { week: 'Week 2', amount: 1800 },
-  { week: 'Week 3', amount: 1400 },
-  { week: 'Week 4', amount: 1000 },
-]
+export default function SpendingChart({ expenses }) {
+  const now = new Date()
+  const currentMonth = now.toISOString().slice(0, 7)
 
-const maxAmount = Math.max(...weeklyData.map((d) => d.amount))
+  const getWeekNumber = (dateStr) => {
+    const day = new Date(dateStr).getDate()
+    if (day <= 7) return 'Week 1'
+    if (day <= 14) return 'Week 2'
+    if (day <= 21) return 'Week 3'
+    return 'Week 4'
+  }
 
-export default function SpendingChart() {
+  const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+  const weeklyData = weeks.map((week) => {
+    const total = expenses
+      .filter((e) => e.date.startsWith(currentMonth) && getWeekNumber(e.date) === week)
+      .reduce((sum, e) => sum + e.amount, 0)
+    return { week, amount: total }
+  })
+
+  const maxAmount = Math.max(...weeklyData.map((d) => d.amount), 1)
+
   return (
     <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
       <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Monthly Spending</h2>
@@ -17,7 +29,7 @@ export default function SpendingChart() {
           <div key={data.week}>
             <div className="flex justify-between text-xs sm:text-sm mb-1">
               <span className="text-gray-600">{data.week}</span>
-              <span className="font-medium text-gray-900">₹{data.amount}</span>
+              <span className="font-medium text-gray-900">₹{data.amount.toLocaleString()}</span>
             </div>
             <div className="h-2.5 sm:h-3 bg-gray-100 rounded-full overflow-hidden">
               <div
