@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SummaryCard from '../components/SummaryCard'
 import QuickExpense from '../components/QuickExpense'
 import SpendingChart from '../components/SpendingChart'
@@ -27,7 +27,14 @@ const categoryColors = {
 }
 
 export default function Dashboard() {
-  const [expenses, setExpenses] = useState([])
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem('mymoney-expenses')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('mymoney-expenses', JSON.stringify(expenses))
+  }, [expenses])
 
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
   const totalBalance = INCOME - totalExpenses
