@@ -58,7 +58,7 @@ export default function QuickExpense({ expenses, setExpenses }) {
       setAmount('')
       setSuccess('Expense added successfully ✓')
       setTimeout(() => setSuccess(''), 3000)
-    } catch (err) {
+    } catch {
       setError('Unable to add expense')
     }
   }

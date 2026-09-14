@@ -87,7 +87,7 @@ export default function RecentTransactions({ expenses, setExpenses }) {
         e._id === id ? data.transaction : e
       ))
       setEditingId(null)
-    } catch (err) {
+    } catch {
       setEditError('Unable to update expense')
     }
   }
@@ -103,7 +103,7 @@ export default function RecentTransactions({ expenses, setExpenses }) {
       }
 
       setExpenses(expenses.filter((e) => e._id !== id))
-    } catch (err) {
+    } catch {
       // silently fail
     }
   }

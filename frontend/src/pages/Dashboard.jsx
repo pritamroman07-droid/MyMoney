@@ -23,7 +23,7 @@ export default function Dashboard() {
       const res = await fetch(API_URL)
       const data = await res.json()
       setExpenses(data)
-    } catch (err) {
+    } catch {
       setError('Unable to load transactions')
     } finally {
       setLoading(false)
