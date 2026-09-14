@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_URL = 'http://localhost:5000/api/transactions'
+
 const categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Education', 'Other']
 
 const categoryEmojis = {
@@ -18,7 +20,7 @@ export default function QuickExpense({ expenses, setExpenses }) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     setError('')
     setSuccess('')
 
@@ -34,18 +36,31 @@ export default function QuickExpense({ expenses, setExpenses }) {
       return
     }
 
-    const newExpense = {
-      id: Date.now(),
-      amount: parsed,
-      category,
-      date: new Date().toISOString().split('T')[0],
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: parsed,
+          category,
+          date: new Date().toISOString().split('T')[0],
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.message || 'Unable to add expense')
+        return
+      }
+
+      setExpenses([data.transaction, ...expenses])
+      setAmount('')
+      setSuccess('Expense added successfully ✓')
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err) {
+      setError('Unable to add expense')
     }
-
-    setExpenses([...expenses, newExpense])
-    setAmount('')
-    setSuccess('Expense added successfully ✓')
-
-    setTimeout(() => setSuccess(''), 3000)
   }
 
   return (
