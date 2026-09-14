@@ -20,11 +20,6 @@ export default function Dashboard({ token }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const authHeaders = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  }
-
   useEffect(() => {
     fetchData()
   }, [])
