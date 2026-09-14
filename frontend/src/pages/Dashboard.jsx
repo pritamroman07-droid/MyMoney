@@ -1,37 +1,59 @@
 import { useState, useEffect } from 'react'
 import SummaryCard from '../components/SummaryCard'
 import QuickExpense from '../components/QuickExpense'
+import AddIncome from '../components/AddIncome'
+import BudgetSetup from '../components/BudgetSetup'
+import BudgetProgress from '../components/BudgetProgress'
 import SpendingChart from '../components/SpendingChart'
+import SpendingAnalytics from '../components/SpendingAnalytics'
+import CategoryChart from '../components/CategoryChart'
 import RecentTransactions from '../components/RecentTransactions'
 
-const INCOME = 30000
-const API_URL = 'http://localhost:5001/api/transactions'
+const EXPENSE_API = '/api/transactions'
+const INCOME_API = '/api/income'
+const BUDGET_API = '/api/budget'
 
-export default function Dashboard() {
+export default function Dashboard({ token }) {
   const [expenses, setExpenses] = useState([])
+  const [income, setIncome] = useState([])
+  const [budget, setBudget] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const authHeaders = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }
+
   useEffect(() => {
-    fetchExpenses()
+    fetchData()
   }, [])
 
-  const fetchExpenses = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
       setError('')
-      const res = await fetch(API_URL)
-      const data = await res.json()
-      setExpenses(data)
+      const [expenseRes, incomeRes, budgetRes] = await Promise.all([
+        fetch(EXPENSE_API, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(INCOME_API, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(BUDGET_API, { headers: { Authorization: `Bearer ${token}` } }),
+      ])
+      const expenseData = await expenseRes.json()
+      const incomeData = await incomeRes.json()
+      const budgetData = await budgetRes.json()
+      setExpenses(expenseData)
+      setIncome(incomeData)
+      setBudget(budgetData)
     } catch {
-      setError('Unable to load transactions')
+      setError('Unable to load data')
     } finally {
       setLoading(false)
     }
   }
 
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const totalBalance = INCOME - totalExpenses
+  const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
+  const totalBalance = totalIncome - totalExpenses
 
   const today = new Date().toISOString().split('T')[0]
   const todayExpenses = expenses
@@ -42,19 +64,22 @@ export default function Dashboard() {
   const monthlyExpenses = expenses
     .filter((e) => e.date.startsWith(currentMonth))
     .reduce((sum, e) => sum + e.amount, 0)
+  const monthlyIncome = income
+    .filter((i) => i.date.startsWith(currentMonth))
+    .reduce((sum, i) => sum + i.amount, 0)
 
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-          Good Morning 👋
+          Good Morning
         </h1>
         <p className="text-sm sm:text-base text-gray-500 mt-1">Here's your financial overview</p>
       </div>
 
       {loading && (
         <div className="text-center py-8">
-          <p className="text-gray-500 text-sm">Loading transactions...</p>
+          <p className="text-gray-500 text-sm">Loading data...</p>
         </div>
       )}
 
@@ -99,7 +124,7 @@ export default function Dashboard() {
             />
             <SummaryCard
               title="Monthly Income"
-              amount={`₹${INCOME.toLocaleString()}`}
+              amount={`₹${monthlyIncome.toLocaleString()}`}
               color="bg-blue-100"
               icon={
                 <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,14 +136,42 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
             <div className="lg:col-span-1">
-              <QuickExpense expenses={expenses} setExpenses={setExpenses} />
+              <AddIncome income={income} setIncome={setIncome} token={token} />
             </div>
-            <div className="lg:col-span-2">
-              <SpendingChart expenses={expenses} />
+            <div className="lg:col-span-1">
+              <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
+            </div>
+            <div className="lg:col-span-1">
+              <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
             </div>
           </div>
 
-          <RecentTransactions expenses={expenses} setExpenses={setExpenses} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="lg:col-span-1">
+              <BudgetProgress budget={budget} monthlyExpenses={monthlyExpenses} />
+            </div>
+            <div className="lg:col-span-1">
+              <SpendingChart expenses={expenses} />
+            </div>
+            <div className="lg:col-span-1">
+              <SpendingAnalytics expenses={expenses} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="lg:col-span-2">
+              <CategoryChart expenses={expenses} />
+            </div>
+            <div className="lg:col-span-1">
+              <RecentTransactions
+                expenses={expenses}
+                setExpenses={setExpenses}
+                income={income}
+                setIncome={setIncome}
+                token={token}
+              />
+            </div>
+          </div>
         </>
       )}
     </div>
