@@ -6,26 +6,6 @@ import RecentTransactions from '../components/RecentTransactions'
 
 const INCOME = 30000
 
-const categoryEmojis = {
-  Food: '🍔',
-  Transport: '🚌',
-  Shopping: '🛒',
-  Bills: '💼',
-  Entertainment: '🎬',
-  Education: '📚',
-  Other: '📦',
-}
-
-const categoryColors = {
-  Food: 'bg-red-100',
-  Transport: 'bg-blue-100',
-  Shopping: 'bg-purple-100',
-  Bills: 'bg-amber-100',
-  Entertainment: 'bg-pink-100',
-  Education: 'bg-indigo-100',
-  Other: 'bg-gray-100',
-}
-
 export default function Dashboard() {
   const [expenses, setExpenses] = useState(() => {
     const saved = localStorage.getItem('mymoney-expenses')
