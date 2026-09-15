@@ -171,17 +171,17 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
   const isEmpty = allTransactions.length === 0
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h2>
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Recent Transactions</h2>
 
       {isEmpty ? (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <p className="text-gray-500 text-sm">No transactions yet</p>
           <p className="text-gray-400 text-xs mt-1">Add your first income or expense to get started.</p>
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {visibleTransactions.map((tx) => (
               <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -281,7 +281,7 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
           </div>
 
           {hasMore && (
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-2 pt-2 border-t border-gray-100">
               <button
                 onClick={() => setExpanded(!expanded)}
                 className="w-full text-center text-sm font-medium text-violet-600 hover:text-violet-700 py-1"

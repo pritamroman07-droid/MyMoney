@@ -67,10 +67,10 @@ export default function QuickExpense({ expenses, setExpenses, token }) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Quick Expense</h2>
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Quick Expense</h2>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div>
           <label className="block text-xs sm:text-sm text-gray-500 mb-1">Amount</label>
           <div className="relative">

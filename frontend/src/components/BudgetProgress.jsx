@@ -1,9 +1,9 @@
 export default function BudgetProgress({ budget, monthlyExpenses }) {
   if (!budget) {
     return (
-      <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Budget Progress</h2>
-        <div className="text-center py-6">
+      <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Budget Progress</h2>
+        <div className="text-center py-4">
           <p className="text-gray-500 text-sm">No monthly budget set.</p>
           <p className="text-gray-400 text-xs mt-1">Set a budget to track your spending.</p>
         </div>
@@ -41,8 +41,8 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+      <div className="flex items-center justify-between mb-3">
         <h2 className="text-base sm:text-lg font-semibold text-gray-900">Budget Progress</h2>
         <button
           onClick={() => {
@@ -57,7 +57,7 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
 
       {showWarning && (
         <div
-          className={`mb-4 px-3 py-2 rounded-lg ${statusBg}`}
+          className={`mb-3 px-3 py-2 rounded-lg ${statusBg}`}
           role="alert"
           aria-live="polite"
         >
@@ -65,7 +65,7 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
         </div>
       )}
 
-      <div className="space-y-3 mb-4">
+      <div className="space-y-2 mb-3">
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-500">Budget</span>
           <span className="font-semibold text-gray-900 text-sm sm:text-base">₹{budgetAmount.toLocaleString()}</span>
@@ -82,12 +82,12 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex justify-between text-xs mb-1">
           <span className="text-gray-500">Progress</span>
           <span className="font-medium text-gray-700">{percentage}%</span>
         </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${barColor}`}
             style={{ width: `${cappedPercentage}%` }}

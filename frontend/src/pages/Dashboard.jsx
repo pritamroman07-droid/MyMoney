@@ -5,7 +5,6 @@ import AddIncome from '../components/AddIncome'
 import BudgetSetup from '../components/BudgetSetup'
 import BudgetProgress from '../components/BudgetProgress'
 import SpendingChart from '../components/SpendingChart'
-import SpendingAnalytics from '../components/SpendingAnalytics'
 import CategoryChart from '../components/CategoryChart'
 import RecentTransactions from '../components/RecentTransactions'
 import FallingMoney from '../components/FallingMoney'
@@ -72,7 +71,7 @@ export default function Dashboard({ token }) {
       {showAnimation && <FallingMoney />}
 
       {/* ROW 1 — Header */}
-      <div className="mb-5 sm:mb-6">
+      <div className="mb-4 sm:mb-5">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Good Morning
         </h1>
@@ -94,7 +93,7 @@ export default function Dashboard({ token }) {
       {!loading && !error && (
         <>
           {/* ROW 2 — Summary Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-5">
             <SummaryCard
               title="Total Balance"
               amount={`₹${totalBalance.toLocaleString()}`}
@@ -138,7 +137,7 @@ export default function Dashboard({ token }) {
           </div>
 
           {/* ROW 3 — Quick Expense + Add Income | Monthly Budget + Budget Progress */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-5 sm:mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
             <div className="flex flex-col gap-4 sm:gap-5">
               <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
               <AddIncome income={income} setIncome={setIncome} token={token} />
@@ -149,8 +148,8 @@ export default function Dashboard({ token }) {
             </div>
           </div>
 
-          {/* ROW 4 — Spending Chart + Category Spending */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-5 sm:mb-6">
+          {/* ROW 4 — Monthly Spending + Category Spending */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
             <div className="min-w-0">
               <SpendingChart expenses={expenses} />
             </div>
@@ -159,21 +158,14 @@ export default function Dashboard({ token }) {
             </div>
           </div>
 
-          {/* ROW 5 — Spending Analytics + Recent Transactions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-            <div className="min-w-0">
-              <SpendingAnalytics expenses={expenses} />
-            </div>
-            <div className="min-w-0">
-              <RecentTransactions
-                expenses={expenses}
-                setExpenses={setExpenses}
-                income={income}
-                setIncome={setIncome}
-                token={token}
-              />
-            </div>
-          </div>
+          {/* ROW 5 — Recent Transactions */}
+          <RecentTransactions
+            expenses={expenses}
+            setExpenses={setExpenses}
+            income={income}
+            setIncome={setIncome}
+            token={token}
+          />
         </>
       )}
     </div>

@@ -21,17 +21,17 @@ export default function SpendingChart({ expenses }) {
   const maxAmount = Math.max(...weeklyData.map((d) => d.amount), 1)
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Monthly Spending</h2>
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Monthly Spending</h2>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {weeklyData.map((data) => (
           <div key={data.week}>
             <div className="flex justify-between text-xs sm:text-sm mb-1">
               <span className="text-gray-600">{data.week}</span>
               <span className="font-medium text-gray-900">₹{data.amount.toLocaleString()}</span>
             </div>
-            <div className="h-2.5 sm:h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${(data.amount / maxAmount) * 100}%` }}
@@ -41,7 +41,7 @@ export default function SpendingChart({ expenses }) {
         ))}
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-100">
+      <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="flex justify-between">
           <span className="text-xs sm:text-sm text-gray-500">Total This Month</span>
           <span className="font-semibold text-gray-900 text-sm sm:text-base">

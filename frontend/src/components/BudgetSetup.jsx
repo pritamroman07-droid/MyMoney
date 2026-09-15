@@ -86,9 +86,9 @@ export default function BudgetSetup({ budget, setBudget, token }) {
 
   if (!editing && budget) {
     return (
-      <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Monthly Budget</h2>
-        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+      <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Monthly Budget</h2>
+        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
           ₹{budget.amount.toLocaleString()}
         </p>
         <div className="flex gap-2">
@@ -110,9 +110,9 @@ export default function BudgetSetup({ budget, setBudget, token }) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Monthly Budget</h2>
-      <div className="space-y-4">
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Monthly Budget</h2>
+      <div className="space-y-3">
         <div>
           <label className="block text-xs sm:text-sm text-gray-500 mb-1">Amount</label>
           <div className="relative">
