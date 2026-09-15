@@ -16,13 +16,13 @@ const categoryEmojis = {
 }
 
 const categoryColors = {
-  Food: 'bg-red-100',
-  Transport: 'bg-blue-100',
-  Shopping: 'bg-purple-100',
-  Bills: 'bg-amber-100',
-  Entertainment: 'bg-pink-100',
-  Education: 'bg-indigo-100',
-  Other: 'bg-gray-100',
+  Food: 'bg-red-100 dark:bg-red-900/30',
+  Transport: 'bg-blue-100 dark:bg-blue-900/30',
+  Shopping: 'bg-purple-100 dark:bg-purple-900/30',
+  Bills: 'bg-amber-100 dark:bg-amber-900/30',
+  Entertainment: 'bg-pink-100 dark:bg-pink-900/30',
+  Education: 'bg-indigo-100 dark:bg-indigo-900/30',
+  Other: 'bg-gray-100 dark:bg-gray-700',
 }
 
 const formatDate = (dateStr) => {
@@ -171,13 +171,13 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
   const isEmpty = allTransactions.length === 0
 
   return (
-    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Recent Transactions</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-100 dark:border-gray-700">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3">Recent Transactions</h2>
 
       {isEmpty ? (
         <div className="text-center py-6">
-          <p className="text-gray-500 text-sm">No transactions yet</p>
-          <p className="text-gray-400 text-xs mt-1">Add your first income or expense to get started.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">No transactions yet</p>
+          <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Add your first income or expense to get started.</p>
         </div>
       ) : (
         <>
@@ -186,7 +186,7 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
               <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                    tx.type === 'income' ? 'bg-blue-100' : (categoryColors[tx.category] || 'bg-gray-100')
+                    tx.type === 'income' ? 'bg-blue-100 dark:bg-blue-900/30' : (categoryColors[tx.category] || 'bg-gray-100 dark:bg-gray-700')
                   }`}>
                     <span className="text-base sm:text-lg">
                       {tx.type === 'income' ? '💰' : (categoryEmojis[tx.category] || '📦')}
@@ -203,13 +203,13 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
                               setEditAmount(e.target.value)
                               setEditError('')
                             }}
-                            className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-24 px-2 py-1 border border-gray-200 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                           {editingType === 'expense' && (
                             <select
                               value={editCategory}
                               onChange={(e) => setEditCategory(e.target.value)}
-                              className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              className="px-2 py-1 border border-gray-200 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                             >
                               {categories.map((cat) => (
                                 <option key={cat} value={cat}>{cat}</option>
@@ -223,17 +223,17 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
                               setEditDate(e.target.value)
                               setEditError('')
                             }}
-                            className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="px-2 py-1 border border-gray-200 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
-                        {editError && <p className="text-red-500 text-xs">{editError}</p>}
+                        {editError && <p className="text-red-500 dark:text-red-400 text-xs">{editError}</p>}
                       </div>
                     ) : (
                       <>
-                        <p className="font-medium text-gray-900 truncate text-sm sm:text-base">
+                        <p className="font-medium text-gray-900 dark:text-white truncate text-sm sm:text-base">
                           {tx.type === 'income' ? 'Income' : tx.category}
                         </p>
-                        <p className="text-xs sm:text-sm text-gray-500">{formatDate(tx.date)}</p>
+                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{formatDate(tx.date)}</p>
                       </>
                     )}
                   </div>
@@ -243,13 +243,13 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
                     <>
                       <button
                         onClick={() => handleSaveEdit(tx._id, tx.type)}
-                        className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                       >
                         Save
                       </button>
                       <button
                         onClick={() => setEditingId(null)}
-                        className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                        className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium"
                       >
                         Cancel
                       </button>
@@ -257,19 +257,19 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
                   ) : (
                     <>
                       <span className={`font-semibold text-sm sm:text-base ${
-                        tx.type === 'income' ? 'text-blue-600' : 'text-gray-900'
+                        tx.type === 'income' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'
                       }`}>
                         {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString()}
                       </span>
                       <button
                         onClick={() => handleEdit(tx)}
-                        className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(tx._id, tx.type)}
-                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium"
                       >
                         Delete
                       </button>
@@ -281,10 +281,10 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
           </div>
 
           {hasMore && (
-            <div className="mt-2 pt-2 border-t border-gray-100">
+            <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="w-full text-center text-sm font-medium text-violet-600 hover:text-violet-700 py-1"
+                className="w-full text-center text-sm font-medium text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 py-1"
               >
                 {expanded ? 'Show less' : 'See more'}
               </button>

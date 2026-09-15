@@ -1,11 +1,11 @@
 export default function BudgetProgress({ budget, monthlyExpenses }) {
   if (!budget) {
     return (
-      <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Budget Progress</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-100 dark:border-gray-700">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3">Budget Progress</h2>
         <div className="text-center py-4">
-          <p className="text-gray-500 text-sm">No monthly budget set.</p>
-          <p className="text-gray-400 text-xs mt-1">Set a budget to track your spending.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">No monthly budget set.</p>
+          <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Set a budget to track your spending.</p>
         </div>
       </div>
     )
@@ -19,17 +19,17 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
 
   const showWarning = remainingPercentage <= 20
 
-  let statusColor = 'text-emerald-600'
-  let statusBg = 'bg-emerald-50'
+  let statusColor = 'text-emerald-600 dark:text-emerald-400'
+  let statusBg = 'bg-emerald-50 dark:bg-emerald-900/30'
   let statusText = "You're within your budget."
 
   if (percentage >= 100) {
-    statusColor = 'text-red-600'
-    statusBg = 'bg-red-50'
+    statusColor = 'text-red-600 dark:text-red-400'
+    statusBg = 'bg-red-50 dark:bg-red-900/30'
     statusText = "You've exceeded your monthly budget."
   } else if (showWarning) {
-    statusColor = 'text-amber-600'
-    statusBg = 'bg-amber-50'
+    statusColor = 'text-amber-600 dark:text-amber-400'
+    statusBg = 'bg-amber-50 dark:bg-amber-900/30'
     statusText = `Only ₹${Math.abs(remaining).toLocaleString()} remains from your monthly budget.`
   }
 
@@ -41,15 +41,15 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-100 dark:border-gray-700">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Budget Progress</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Budget Progress</h2>
         <button
           onClick={() => {
             const event = new CustomEvent('edit-budget')
             window.dispatchEvent(event)
           }}
-          className="text-xs text-violet-600 hover:text-violet-700 font-medium"
+          className="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium"
         >
           Edit
         </button>
@@ -67,16 +67,16 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
 
       <div className="space-y-2 mb-3">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Budget</span>
-          <span className="font-semibold text-gray-900 text-sm sm:text-base">₹{budgetAmount.toLocaleString()}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Budget</span>
+          <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">₹{budgetAmount.toLocaleString()}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Spent</span>
-          <span className="font-semibold text-gray-900 text-sm sm:text-base">₹{monthlyExpenses.toLocaleString()}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Spent</span>
+          <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">₹{monthlyExpenses.toLocaleString()}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">Remaining</span>
-          <span className={`font-semibold text-sm sm:text-base ${remaining >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Remaining</span>
+          <span className={`font-semibold text-sm sm:text-base ${remaining >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
             ₹{Math.abs(remaining).toLocaleString()}{remaining < 0 ? ' over' : ''}
           </span>
         </div>
@@ -84,10 +84,10 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
 
       <div className="mb-3">
         <div className="flex justify-between text-xs mb-1">
-          <span className="text-gray-500">Progress</span>
-          <span className="font-medium text-gray-700">{percentage}%</span>
+          <span className="text-gray-500 dark:text-gray-400">Progress</span>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{percentage}%</span>
         </div>
-        <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${barColor}`}
             style={{ width: `${cappedPercentage}%` }}
