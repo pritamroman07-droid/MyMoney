@@ -134,26 +134,26 @@ export default function Dashboard({ token }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="lg:col-span-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="sm:col-span-1 lg:col-span-1">
               <AddIncome income={income} setIncome={setIncome} token={token} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="sm:col-span-1 lg:col-span-1">
               <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
             </div>
-            <div className="lg:col-span-1">
-              {!budget && <BudgetSetup budget={budget} setBudget={setBudget} token={token} />}
+            <div className="sm:col-span-2 lg:col-span-1">
+              <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="lg:col-span-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="sm:col-span-1 lg:col-span-1">
               <BudgetProgress budget={budget} monthlyExpenses={monthlyExpenses} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="sm:col-span-1 lg:col-span-1">
               <SpendingChart expenses={expenses} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="sm:col-span-2 lg:col-span-1">
               <SpendingAnalytics expenses={expenses} />
             </div>
           </div>

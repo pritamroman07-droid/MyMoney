@@ -37,6 +37,8 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
 }
 
+const INITIAL_VISIBLE = 1
+
 export default function RecentTransactions({ expenses, setExpenses, income, setIncome, token }) {
   const [editingId, setEditingId] = useState(null)
   const [editingType, setEditingType] = useState('')
@@ -44,12 +46,16 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
   const [editCategory, setEditCategory] = useState('')
   const [editDate, setEditDate] = useState('')
   const [editError, setEditError] = useState('')
+  const [expanded, setExpanded] = useState(false)
 
   const expenseList = expenses.map((e) => ({ ...e, type: 'expense' }))
   const incomeList = income.map((i) => ({ ...i, type: 'income' }))
   const allTransactions = [...expenseList, ...incomeList].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   )
+
+  const visibleTransactions = expanded ? allTransactions : allTransactions.slice(0, INITIAL_VISIBLE)
+  const hasMore = allTransactions.length > INITIAL_VISIBLE
 
   const handleEdit = (tx) => {
     setEditingId(tx._id)
@@ -174,104 +180,117 @@ export default function RecentTransactions({ expenses, setExpenses, income, setI
           <p className="text-gray-400 text-xs mt-1">Add your first income or expense to get started.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {allTransactions.map((tx) => (
-            <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                  tx.type === 'income' ? 'bg-blue-100' : (categoryColors[tx.category] || 'bg-gray-100')
-                }`}>
-                  <span className="text-base sm:text-lg">
-                    {tx.type === 'income' ? '💰' : (categoryEmojis[tx.category] || '📦')}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  {editingId === tx._id ? (
-                    <div className="space-y-2">
-                      <div className="flex gap-2 flex-wrap">
-                        <input
-                          type="number"
-                          value={editAmount}
-                          onChange={(e) => {
-                            setEditAmount(e.target.value)
-                            setEditError('')
-                          }}
-                          className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        {editingType === 'expense' && (
-                          <select
-                            value={editCategory}
-                            onChange={(e) => setEditCategory(e.target.value)}
+        <>
+          <div className="space-y-3">
+            {visibleTransactions.map((tx) => (
+              <div key={tx._id} className="flex items-center justify-between py-2 gap-2 min-w-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                    tx.type === 'income' ? 'bg-blue-100' : (categoryColors[tx.category] || 'bg-gray-100')
+                  }`}>
+                    <span className="text-base sm:text-lg">
+                      {tx.type === 'income' ? '💰' : (categoryEmojis[tx.category] || '📦')}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    {editingId === tx._id ? (
+                      <div className="space-y-2">
+                        <div className="flex gap-2 flex-wrap">
+                          <input
+                            type="number"
+                            value={editAmount}
+                            onChange={(e) => {
+                              setEditAmount(e.target.value)
+                              setEditError('')
+                            }}
+                            className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          />
+                          {editingType === 'expense' && (
+                            <select
+                              value={editCategory}
+                              onChange={(e) => setEditCategory(e.target.value)}
+                              className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            >
+                              {categories.map((cat) => (
+                                <option key={cat} value={cat}>{cat}</option>
+                              ))}
+                            </select>
+                          )}
+                          <input
+                            type="date"
+                            value={editDate}
+                            onChange={(e) => {
+                              setEditDate(e.target.value)
+                              setEditError('')
+                            }}
                             className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          >
-                            {categories.map((cat) => (
-                              <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                          </select>
-                        )}
-                        <input
-                          type="date"
-                          value={editDate}
-                          onChange={(e) => {
-                            setEditDate(e.target.value)
-                            setEditError('')
-                          }}
-                          className="px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
+                          />
+                        </div>
+                        {editError && <p className="text-red-500 text-xs">{editError}</p>}
                       </div>
-                      {editError && <p className="text-red-500 text-xs">{editError}</p>}
-                    </div>
+                    ) : (
+                      <>
+                        <p className="font-medium text-gray-900 truncate text-sm sm:text-base">
+                          {tx.type === 'income' ? 'Income' : tx.category}
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500">{formatDate(tx.date)}</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {editingId === tx._id ? (
+                    <>
+                      <button
+                        onClick={() => handleSaveEdit(tx._id, tx.type)}
+                        className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </>
                   ) : (
                     <>
-                      <p className="font-medium text-gray-900 truncate text-sm sm:text-base">
-                        {tx.type === 'income' ? 'Income' : tx.category}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-500">{formatDate(tx.date)}</p>
+                      <span className={`font-semibold text-sm sm:text-base ${
+                        tx.type === 'income' ? 'text-blue-600' : 'text-gray-900'
+                      }`}>
+                        {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                      </span>
+                      <button
+                        onClick={() => handleEdit(tx)}
+                        className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(tx._id, tx.type)}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Delete
+                      </button>
                     </>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {editingId === tx._id ? (
-                  <>
-                    <button
-                      onClick={() => handleSaveEdit(tx._id, tx.type)}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="text-xs text-gray-500 hover:text-gray-700 font-medium"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span className={`font-semibold text-sm sm:text-base ${
-                      tx.type === 'income' ? 'text-blue-600' : 'text-gray-900'
-                    }`}>
-                      {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString()}
-                    </span>
-                    <button
-                      onClick={() => handleEdit(tx)}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(tx._id, tx.type)}
-                      className="text-xs text-red-600 hover:text-red-700 font-medium"
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
+            ))}
+          </div>
+
+          {hasMore && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="w-full text-center text-sm font-medium text-violet-600 hover:text-violet-700 py-1"
+              >
+                {expanded ? 'Show less' : 'See more'}
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   )
