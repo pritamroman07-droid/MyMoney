@@ -71,7 +71,7 @@ export default function Dashboard({ token }) {
       {showAnimation && <FallingMoney />}
 
       {/* ROW 1 — Header */}
-      <div className="mb-4 sm:mb-5">
+      <div className="mb-4">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Good Morning
         </h1>
@@ -93,7 +93,7 @@ export default function Dashboard({ token }) {
       {!loading && !error && (
         <>
           {/* ROW 2 — Summary Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             <SummaryCard
               title="Total Balance"
               amount={`₹${totalBalance.toLocaleString()}`}
@@ -136,36 +136,29 @@ export default function Dashboard({ token }) {
             />
           </div>
 
-          {/* ROW 3 — Quick Expense + Add Income | Monthly Budget + Budget Progress */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
-            <div className="flex flex-col gap-4 sm:gap-5">
+          {/* ROW 3+4 — Two continuous columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col gap-4">
               <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
               <AddIncome income={income} setIncome={setIncome} token={token} />
+              <SpendingChart expenses={expenses} />
+              <RecentTransactions
+                expenses={expenses}
+                setExpenses={setExpenses}
+                income={income}
+                setIncome={setIncome}
+                token={token}
+              />
             </div>
-            <div className="flex flex-col gap-4 sm:gap-5">
+
+            {/* RIGHT COLUMN */}
+            <div className="flex flex-col gap-4">
               <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
               <BudgetProgress budget={budget} monthlyExpenses={monthlyExpenses} />
-            </div>
-          </div>
-
-          {/* ROW 4 — Monthly Spending + Category Spending */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
-            <div className="min-w-0">
-              <SpendingChart expenses={expenses} />
-            </div>
-            <div className="min-w-0">
               <CategoryChart expenses={expenses} />
             </div>
           </div>
-
-          {/* ROW 5 — Recent Transactions */}
-          <RecentTransactions
-            expenses={expenses}
-            setExpenses={setExpenses}
-            income={income}
-            setIncome={setIncome}
-            token={token}
-          />
         </>
       )}
     </div>
