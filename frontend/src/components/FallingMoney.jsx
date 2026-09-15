@@ -12,7 +12,7 @@ function DollarNote({ index }) {
     const duration = randomBetween(8, 16)
     const delay = randomBetween(0, 10)
     const size = randomBetween(24, 40)
-    const opacity = randomBetween(0.15, 0.35)
+    const opacity = 1
 
     return {
       left: `${left}%`,
