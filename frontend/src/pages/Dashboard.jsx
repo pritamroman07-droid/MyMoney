@@ -143,13 +143,6 @@ export default function Dashboard({ token }) {
               <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
               <AddIncome income={income} setIncome={setIncome} token={token} />
               <SpendingChart expenses={expenses} />
-              <RecentTransactions
-                expenses={expenses}
-                setExpenses={setExpenses}
-                income={income}
-                setIncome={setIncome}
-                token={token}
-              />
             </div>
 
             {/* RIGHT COLUMN */}
@@ -157,6 +150,13 @@ export default function Dashboard({ token }) {
               <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
               <BudgetProgress budget={budget} monthlyExpenses={monthlyExpenses} />
               <CategoryChart expenses={expenses} />
+              <RecentTransactions
+                expenses={expenses}
+                setExpenses={setExpenses}
+                income={income}
+                setIncome={setIncome}
+                token={token}
+              />
             </div>
           </div>
         </>
