@@ -70,7 +70,9 @@ export default function Dashboard({ token }) {
   return (
     <div className="relative p-3 sm:p-4 md:p-6 lg:p-8">
       {showAnimation && <FallingMoney />}
-      <div className="mb-6 sm:mb-8">
+
+      {/* ROW 1 — Header */}
+      <div className="mb-5 sm:mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Good Morning
         </h1>
@@ -91,7 +93,8 @@ export default function Dashboard({ token }) {
 
       {!loading && !error && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          {/* ROW 2 — Summary Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
             <SummaryCard
               title="Total Balance"
               amount={`₹${totalBalance.toLocaleString()}`}
@@ -134,35 +137,34 @@ export default function Dashboard({ token }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="sm:col-span-1 lg:col-span-1">
+          {/* ROW 3 — Quick Expense + Add Income | Monthly Budget + Budget Progress */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-5 sm:mb-6">
+            <div className="flex flex-col gap-4 sm:gap-5">
+              <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
               <AddIncome income={income} setIncome={setIncome} token={token} />
             </div>
-            <div className="sm:col-span-1 lg:col-span-1">
-              <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
-            </div>
-            <div className="sm:col-span-2 lg:col-span-1">
+            <div className="flex flex-col gap-4 sm:gap-5">
               <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="sm:col-span-1 lg:col-span-1">
               <BudgetProgress budget={budget} monthlyExpenses={monthlyExpenses} />
             </div>
-            <div className="sm:col-span-1 lg:col-span-1">
+          </div>
+
+          {/* ROW 4 — Spending Chart + Category Spending */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-5 sm:mb-6">
+            <div className="min-w-0">
               <SpendingChart expenses={expenses} />
             </div>
-            <div className="sm:col-span-2 lg:col-span-1">
-              <SpendingAnalytics expenses={expenses} />
+            <div className="min-w-0">
+              <CategoryChart expenses={expenses} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="lg:col-span-2">
-              <CategoryChart expenses={expenses} />
+          {/* ROW 5 — Spending Analytics + Recent Transactions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            <div className="min-w-0">
+              <SpendingAnalytics expenses={expenses} />
             </div>
-            <div className="lg:col-span-1">
+            <div className="min-w-0">
               <RecentTransactions
                 expenses={expenses}
                 setExpenses={setExpenses}
