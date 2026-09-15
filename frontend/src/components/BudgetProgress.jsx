@@ -13,8 +13,11 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
 
   const budgetAmount = budget.amount
   const remaining = budgetAmount - monthlyExpenses
+  const remainingPercentage = budgetAmount > 0 ? (remaining / budgetAmount) * 100 : 0
   const percentage = Math.round((monthlyExpenses / budgetAmount) * 100)
   const cappedPercentage = Math.min(percentage, 100)
+
+  const showWarning = remainingPercentage <= 20
 
   let statusColor = 'text-emerald-600'
   let statusBg = 'bg-emerald-50'
@@ -23,23 +26,44 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
   if (percentage >= 100) {
     statusColor = 'text-red-600'
     statusBg = 'bg-red-50'
-    statusText = "You're over your budget."
-  } else if (percentage >= 80) {
+    statusText = "You've exceeded your monthly budget."
+  } else if (showWarning) {
     statusColor = 'text-amber-600'
     statusBg = 'bg-amber-50'
-    statusText = "You're close to your budget."
+    statusText = `Only ₹${Math.abs(remaining).toLocaleString()} remains from your monthly budget.`
   }
 
   let barColor = 'bg-emerald-500'
   if (percentage >= 100) {
     barColor = 'bg-red-500'
-  } else if (percentage >= 80) {
+  } else if (showWarning) {
     barColor = 'bg-amber-500'
   }
 
   return (
     <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Budget Progress</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Budget Progress</h2>
+        <button
+          onClick={() => {
+            const event = new CustomEvent('edit-budget')
+            window.dispatchEvent(event)
+          }}
+          className="text-xs text-violet-600 hover:text-violet-700 font-medium"
+        >
+          Edit
+        </button>
+      </div>
+
+      {showWarning && (
+        <div
+          className={`mb-4 px-3 py-2 rounded-lg ${statusBg}`}
+          role="alert"
+          aria-live="polite"
+        >
+          <p className={`text-xs sm:text-sm font-medium ${statusColor}`}>{statusText}</p>
+        </div>
+      )}
 
       <div className="space-y-3 mb-4">
         <div className="flex justify-between items-center">
@@ -71,9 +95,11 @@ export default function BudgetProgress({ budget, monthlyExpenses }) {
         </div>
       </div>
 
-      <div className={`px-3 py-2 rounded-lg ${statusBg}`}>
-        <p className={`text-xs sm:text-sm font-medium ${statusColor}`}>{statusText}</p>
-      </div>
+      {!showWarning && (
+        <div className={`px-3 py-2 rounded-lg ${statusBg}`}>
+          <p className={`text-xs sm:text-sm font-medium ${statusColor}`}>{statusText}</p>
+        </div>
+      )}
     </div>
   )
 }
