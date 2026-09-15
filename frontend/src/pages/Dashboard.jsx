@@ -8,6 +8,7 @@ import SpendingChart from '../components/SpendingChart'
 import SpendingAnalytics from '../components/SpendingAnalytics'
 import CategoryChart from '../components/CategoryChart'
 import RecentTransactions from '../components/RecentTransactions'
+import FallingMoney from '../components/FallingMoney'
 
 const EXPENSE_API = '/api/transactions'
 const INCOME_API = '/api/income'
@@ -63,8 +64,12 @@ export default function Dashboard({ token }) {
     .filter((i) => i.date.startsWith(currentMonth))
     .reduce((sum, i) => sum + i.amount, 0)
 
+  const hasIncome = income.length > 0
+  const showAnimation = hasIncome && totalBalance >= 0
+
   return (
-    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+    <div className="relative p-3 sm:p-4 md:p-6 lg:p-8">
+      {showAnimation && <FallingMoney />}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Good Morning
@@ -137,7 +142,7 @@ export default function Dashboard({ token }) {
               <QuickExpense expenses={expenses} setExpenses={setExpenses} token={token} />
             </div>
             <div className="lg:col-span-1">
-              <BudgetSetup budget={budget} setBudget={setBudget} token={token} />
+              {!budget && <BudgetSetup budget={budget} setBudget={setBudget} token={token} />}
             </div>
           </div>
 
